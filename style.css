@@ -1,0 +1,228 @@
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding-top: 80px;
+}
+
+
+.seccion-principal {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.titulo-principal {
+    font-size: 3rem;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.descripcion-principal {
+    font-size: 1.3rem;
+    opacity: 0.9;
+}
+
+.botones-principales .btn {
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    margin-bottom: 10px;
+}
+
+.imagen-principal {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 60px;
+    backdrop-filter: blur(10px);
+}
+
+.icono-grande {
+    font-size: 8rem;
+    color: white;
+    opacity: 0.8;
+}
+
+
+.tarjeta-funcion {
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 15px;
+}
+
+.tarjeta-funcion:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.icono-funcion {
+    font-size: 3rem;
+    color: #0d6efd;
+    margin-bottom: 20px;
+}
+
+
+.beneficio-item {
+    padding: 20px;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.beneficio-item:hover {
+    background-color: #f8f9fa;
+}
+
+.icono-beneficio {
+    background: linear-gradient(45deg, #0d6efd, #6610f2);
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.contenido-beneficio h5 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.contenido-beneficio p {
+    color: #666;
+    margin: 0;
+}
+
+
+#formulario-contacto {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.form-control {
+    border-radius: 10px;
+    border: 2px solid #e9ecef;
+    padding: 12px 15px;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+}
+
+
+.btn {
+    border-radius: 10px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+
+.navbar-brand {
+    font-size: 1.5rem;
+}
+
+.navbar-nav .nav-link {
+    font-weight: 500;
+    margin: 0 10px;
+    transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #fff !important;
+    text-decoration: underline;
+}
+
+
+section {
+    scroll-margin-top: 80px;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+footer a {
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+footer a:hover {
+    opacity: 0.8;
+}
+
+
+@media (max-width: 768px) {
+    .titulo-principal {
+        font-size: 2.2rem;
+    }
+    
+    .descripcion-principal {
+        font-size: 1.1rem;
+    }
+    
+    .icono-grande {
+        font-size: 5rem;
+    }
+    
+    .imagen-principal {
+        padding: 40px;
+        margin-top: 30px;
+    }
+    
+    #formulario-contacto {
+        padding: 25px;
+    }
+}
+
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+
+.btn-success:hover {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.btn-outline-primary:hover {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+}
+
+
+.card-title {
+    color: #333;
+    font-weight: 600;
+}
+
+.card-text {
+    color: #666;
+    line-height: 1.6;
+}
