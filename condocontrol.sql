@@ -129,3 +129,96 @@ WHERE patente = 'ABC123';
 UPDATE VISITANTES 
 SET telefono = '+56888999000' 
 WHERE documento = '12.345.678-9';
+
+-- Eliminar accesos antiguos (más de 6 meses)
+DELETE FROM ACCESOS 
+WHERE fecha_hora < DATE_SUB(NOW(), INTERVAL 6 MONTH);
+
+-- Eliminar vehículos inactivos sin accesos recientes
+DELETE FROM VEHICULOS 
+WHERE activo = FALSE 
+AND id_vehiculo NOT IN (
+    SELECT DISTINCT id_vehiculo 
+    FROM ACCESOS 
+    WHERE id_vehiculo IS NOT NULL 
+    AND fecha_hora >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
+);
+
+-- Reporte diario
+CREATE VIEW vista_reporte_diario AS
+SELECT 
+    a.id_acceso,
+    a.tipo_acceso,
+    TIME(a.fecha_hora) AS hora,
+    COALESCE(u.nombre, vis.nombre) AS persona,
+    COALESCE(u.numero_unidad, a.unidad_visitada) AS unidad,
+    CASE 
+        WHEN u.id_usuario IS NOT NULL THEN 'Residente'
+        ELSE 'Visitante'
+    END AS tipo_persona,
+    v.placa,
+    g.nombre AS guardia
+FROM ACCESOS a
+LEFT JOIN USUARIOS u ON a.id_usuario = u.id_usuario
+LEFT JOIN VISITANTES vis ON a.id_visitante = vis.id_visitante
+LEFT JOIN VEHICULOS v ON a.id_vehiculo = v.id_vehiculo
+LEFT JOIN USUARIOS g ON a.id_guardia = g.id_usuario
+WHERE DATE(a.fecha_hora) = CURDATE()
+ORDER BY a.fecha_hora DESC;
+
+-- Registrar visita
+CREATE PROCEDURE RegistrarVisita(
+    IN p_nombre_visitante VARCHAR(100),
+    IN p_documento VARCHAR(20),
+    IN p_telefono VARCHAR(15),
+    IN p_unidad_visitada VARCHAR(10),
+    IN p_motivo TEXT,
+    IN p_id_guardia INT
+)
+BEGIN
+    DECLARE v_id_visitante INT;
+    
+    -- Verificar si el visitante ya existe
+    SELECT id_visitante INTO v_id_visitante 
+    FROM VISITANTES 
+    WHERE documento = p_documento;
+    
+    -- Si no existe, crearlo
+    IF v_id_visitante IS NULL THEN
+        INSERT INTO VISITANTES (nombre, documento, telefono) 
+        VALUES (p_nombre_visitante, p_documento, p_telefono);
+        SET v_id_visitante = LAST_INSERT_ID();
+    END IF;
+    
+    -- Registrar el acceso
+    INSERT INTO ACCESOS (id_visitante, tipo_acceso, id_guardia, motivo_visita, unidad_visitada)
+    VALUES (v_id_visitante, 'entrada', p_id_guardia, p_motivo, p_unidad_visitada);
+    
+    -- Retornar el ID del acceso creado
+    SELECT LAST_INSERT_ID() as id_acceso_creado;
+    
+END //
+
+
+-- Ver todos los usuarios
+SELECT * FROM USUARIOS;
+
+-- Ver todos los visitantes
+SELECT * FROM VISITANTES;
+
+-- Ver todos los vehículos
+SELECT * FROM VEHICULOS;
+
+-- Ver todos los accesos del día
+SELECT * FROM vista_reporte_diario;
+
+-- Contar registros en cada tabla
+SELECT 'USUARIOS' as tabla, COUNT(*) as total FROM USUARIOS
+UNION ALL
+SELECT 'VISITANTES', COUNT(*) FROM VISITANTES
+UNION ALL
+SELECT 'VEHICULOS', COUNT(*) FROM VEHICULOS
+UNION ALL
+SELECT 'ACCESOS', COUNT(*) FROM ACCESOS;
+
+
