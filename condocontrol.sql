@@ -52,3 +52,80 @@ CREATE TABLE ACCESOS (
     FOREIGN KEY (id_vehiculo) REFERENCES VEHICULOS(id_vehiculo),
     FOREIGN KEY (id_guardia) REFERENCES USUARIOS(id_usuario)
 );
+
+-- Ejemplos Insert Acceso Usuarios
+INSERT INTO ACCESOS (id_usuario, id_vehiculo, tipo_acceso, fecha_hora, id_guardia) VALUES
+(2, 1, 'entrada', '2025-01-20 08:30:00', 1),
+(3, 2, 'entrada', '2025-01-20 09:15:00', 1),
+(2, 1, 'salida', '2025-01-20 18:45:00', 5),
+(4, 3, 'entrada', '2025-01-20 19:30:00', 5),
+(3, 2, 'salida', '2025-01-21 07:20:00', 1);
+
+-- Ejemplos Insert Accesos de visitantes
+INSERT INTO ACCESOS (id_visitante, tipo_acceso, fecha_hora, id_guardia, motivo_visita, unidad_visitada) VALUES
+(1, 'entrada', '2025-01-20 14:00:00', 1, 'Visita familiar', '101'),
+(2, 'entrada', '2025-01-20 15:30:00', 1, 'Entrega de paquete', '202'),
+(1, 'salida', '2025-01-20 17:00:00', 5, NULL, NULL),
+(3, 'entrada', '2025-01-21 10:00:00', 1, 'Reunión de trabajo', '303'),
+(2, 'salida', '2025-01-20 16:00:00', 1, NULL, NULL);
+
+-- CONSULTA : Ver todos los accesos de un residente específico
+SELECT 
+    a.tipo_acceso,
+    a.fecha_hora,
+    u.nombre AS residente,
+    u.numero_unidad,
+    v.placa AS vehiculo
+FROM ACCESOS a
+INNER JOIN USUARIOS u ON a.id_usuario = u.id_usuario
+LEFT JOIN VEHICULOS v ON a.id_vehiculo = v.id_vehiculo
+WHERE u.email = 'julio.fonseca@email.com'
+ORDER BY a.fecha_hora DESC;
+
+-- CONSULTA : Reporte de movimientos por fecha
+SELECT 
+    DATE(fecha_hora) as fecha,
+    COUNT(CASE WHEN tipo_acceso = 'entrada' THEN 1 END) as entradas,
+    COUNT(CASE WHEN tipo_acceso = 'salida' THEN 1 END) as salidas,
+    COUNT(*) as total_movimientos
+FROM ACCESOS 
+WHERE fecha_hora >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+GROUP BY DATE(fecha_hora)
+ORDER BY fecha DESC;
+
+-- CONSULTA : Vehículos registrados con sus propietarios
+SELECT 
+    v.patente,
+    v.marca,
+    v.modelo,
+    v.color,
+    CASE 
+        WHEN v.tipo_propietario = 'usuario' THEN u.nombre
+        ELSE vis.nombre
+    END AS propietario,
+    v.tipo_propietario
+FROM VEHICULOS v
+LEFT JOIN USUARIOS u ON v.id_propietario = u.id_usuario AND v.tipo_propietario = 'usuario'
+LEFT JOIN VISITANTES vis ON v.id_propietario = vis.id_visitante AND v.tipo_propietario = 'visitante'
+WHERE v.activo = TRUE
+ORDER BY v.patente;
+
+-- Actualizar teléfono de un residente
+UPDATE USUARIOS 
+SET telefono = '+56999888777' 
+WHERE email = 'juan.perez@email.com';
+
+-- Cambiar email de un residente
+UPDATE USUARIOS 
+SET email = 'juan.perez.nuevo@email.com' 
+WHERE id_usuario = 2;
+
+-- Marcar vehículo como inactivo
+UPDATE VEHICULOS 
+SET activo = FALSE 
+WHERE patente = 'ABC123';
+
+-- Actualizar información de visitante
+UPDATE VISITANTES 
+SET telefono = '+56888999000' 
+WHERE documento = '12.345.678-9';
